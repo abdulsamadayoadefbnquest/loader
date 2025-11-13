@@ -1,0 +1,120 @@
+import Skeleton from "./Skeleton";
+
+import { cn } from "@/lib/utils";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table";
+
+type TableSkeletonProps = React.HTMLAttributes<HTMLDivElement> & {
+  columnCount: number;
+  rowCount?: number;
+  showSearchableColumn?: boolean;
+  showViewType?: boolean;
+  showRightOptions?: boolean;
+  showHeader?: boolean;
+  rightOptionsCount?: number;
+  cellWidths?: string[];
+  withPagination?: boolean;
+  shrinkZero?: boolean;
+  tableClassName?: string;
+  paginationClassName?: string;
+};
+
+export default function TableSkeleton(props: TableSkeletonProps) {
+  const {
+    columnCount,
+    rowCount = 10,
+    showSearchableColumn = true,
+    showViewType = true,
+    showRightOptions = true,
+    rightOptionsCount = 3,
+    showHeader = true,
+    cellWidths = ["auto"],
+    withPagination = true,
+    shrinkZero = false,
+    className,
+    tableClassName,
+    paginationClassName,
+    ...skeletonProps
+  } = props;
+
+  return (
+    <div className={cn("w-full space-y-4 overflow-auto", className)} {...skeletonProps}>
+      {showHeader && (
+        <div className="flex w-full items-center justify-between space-x-2 overflow-auto">
+          <div className="flex flex-1 items-center space-x-2">
+            {showViewType ? <Skeleton className="h-8 w-[4.5rem]" /> : null}
+            {showSearchableColumn ? <Skeleton className="h-8 w-full lg:w-80" /> : null}
+          </div>
+          {showRightOptions ? (
+            <>
+              {Array.from({ length: rightOptionsCount }).map((_, i) => (
+                <Skeleton key={i} className="ml-auto h-8 w-28" />
+              ))}
+            </>
+          ) : null}
+        </div>
+      )}
+
+      <div className={tableClassName}>
+        <Table>
+          <TableHeader>
+            {Array.from({ length: 1 }).map((_, i) => (
+              <TableRow key={i} className="hover:bg-transparent">
+                {Array.from({ length: columnCount }).map((_, j) => (
+                  <TableHead
+                    key={j}
+                    style={{
+                      width: cellWidths[j],
+                      minWidth: shrinkZero ? cellWidths[j] : "auto",
+                    }}
+                  >
+                    <Skeleton className="h-8 w-full" />
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: rowCount }).map((_, i) => (
+              <TableRow key={i} className="hover:bg-transparent">
+                {Array.from({ length: columnCount }).map((_, j) => (
+                  <TableCell
+                    key={j}
+                    style={{
+                      width: cellWidths[j],
+                      minWidth: shrinkZero ? cellWidths[j] : "auto",
+                    }}
+                  >
+                    <Skeleton className="h-9 w-full" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {withPagination ? (
+        <div
+          className={cn(
+            "flex w-full items-center justify-end gap-4 overflow-auto p-1 sm:gap-8",
+            paginationClassName
+          )}
+        >
+          <div className="flex items-center space-x-2">
+            <Skeleton className="hidden size-7 lg:block" />
+            <Skeleton className="size-7" />
+            <Skeleton className="size-7" />
+            <Skeleton className="hidden size-7 lg:block" />
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
